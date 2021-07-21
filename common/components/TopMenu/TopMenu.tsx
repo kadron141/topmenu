@@ -50,7 +50,7 @@ export function TopMenu(props: ITopMenuProps): JSX.Element {
         <div style={classNames.subItemsWrapper ?? styles.subItemsWrapper}>
           {menuItem.subItems &&
             menuItem.subItems.map((subItem) => {
-              return <span>{subItem.name}</span>;
+              return <span key={subItem.id}>{subItem.name}</span>;
             })}
         </div>
       </div>
@@ -70,6 +70,7 @@ export function TopMenu(props: ITopMenuProps): JSX.Element {
         props.menuData.map((menuItem) => {
           return (
             <div
+              key={menuItem.id}
               style={classNames.menuItemWrapper ?? styles.menuItemWrapper}
               onClick={() => onSelect(menuItem.id)}
             >
