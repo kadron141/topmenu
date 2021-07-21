@@ -1,58 +1,49 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft <hello@kriasoft.com> */
 /* SPDX-License-Identifier: MIT */
 
-import { Box, Button, Container, Typography } from "@material-ui/core";
-import { Api, GitHub } from "@material-ui/icons";
-import * as React from "react";
-import { config } from "../../core";
-import { useLoginDialog, useNavigate } from "../../hooks";
+import React, { useEffect, useState } from "react";
+import { TopMenu } from "../../common/components/TopMenu";
+import {
+  IMenuItem,
+  ITopMenuStyles,
+} from "../../common/components/TopMenuTypes";
 import type { homeQueryResponse as Props } from "./__generated__/homeQuery.graphql";
 
+const API_URL = "http://www.mocky.io/v2/5d3fec2b33000062009d27bc";
+
 export default function Home(props: Props): JSX.Element {
-  const { me } = props;
-  const loginDialog = useLoginDialog();
-  const navigate = useNavigate();
+  const [menuData, setMenuData] = useState<IMenuItem[]>([]);
 
-  function signIn(event: React.MouseEvent<HTMLElement>) {
-    event.preventDefault();
-    loginDialog.show();
-  }
+  const styles: ITopMenuStyles = {
+    menuWrapper: {
+      outline: "1px solid red",
+      width: "40vw",
+    },
+    menuItemWrapper: {
+      margin: "1vw",
+      cursor: "pointer",
+    },
+    menuItemSelected: {
+      outline: "1px solid red",
+    },
+    subItemsWrapper: {
+      marginLeft: "3vw",
+      display: "flex",
+      flexDirection: "column",
+    },
+  };
 
-  return (
-    <Box>
-      <Container sx={{ py: "20vh" }} maxWidth="sm">
-        <Typography sx={{ mb: 2 }} variant="h1" align="center">
-          Welcome to React Starter Kit!
-        </Typography>
+  useEffect(() => {
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((menuItems: IMenuItem[]) => {
+        setMenuData(menuItems);
+      });
+  }, []);
 
-        <Typography sx={{ mb: 4 }} variant="h3" align="center">
-          The web's most popular front-end template for building web
-          applications with React, Relay, and GraphQL.
-        </Typography>
+  const onSelect = (id: number) => {
+    console.log(id);
+  };
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            ".MuiButton-root": { m: 1 },
-          }}
-        >
-          <Button
-            variant="outlined"
-            size="large"
-            href={config.api.path}
-            children="Explorer API"
-            startIcon={<Api />}
-          />
-          <Button
-            variant="outlined"
-            size="large"
-            href="https://github.com/kriasoft/react-starter-kit"
-            children="View on GitHub"
-            startIcon={<GitHub />}
-          />
-        </Box>
-      </Container>
-    </Box>
-  );
+  return <TopMenu menuData={menuData} onSelect={onSelect} />;
 }
